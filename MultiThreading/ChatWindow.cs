@@ -1,0 +1,93 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace MultiThreading
+{
+    public partial class ChatWindow : Form
+    {
+        List<User> users;
+        List<Thread> thrd;
+        Random rnd = new Random();
+        byte numOfUsers;
+        string[] speeds;
+
+        public ChatWindow()
+        {
+            InitializeComponent();
+            users = new List<User>();
+            thrd = new List<Thread>();
+            speeds = new string[] { "5" };
+        }
+
+        private void aplBtn_Click(object sender, EventArgs e)
+        {
+            if(!checkInput()) return;
+            
+            for(byte i = 0; i < users.Count(); i++)
+            {
+                users[i].continueThread = false;
+            }
+            users.Clear();
+
+            numOfUsers = Byte.Parse(amountBox.Text);
+            for (byte i = 0; i < numOfUsers; i++)
+            {
+                users.Add(new User(StringPool.names[rnd.Next(StringPool.names.Length)], 
+                                    Color.FromArgb(rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255)),
+                                    speeds.Length == 1 ? Byte.Parse(speeds[0]) : Byte.Parse(speeds[i])));
+            }
+
+
+            foreach (User u in users)
+            {
+                ThreadPool.QueueUserWorkItem(chat, u);
+            }
+            
+        }
+
+        private bool checkInput()
+        {
+            speeds = speedBox.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            numOfUsers = Byte.Parse(amountBox.Text);
+            foreach (string s in speeds)
+            {
+                if (speeds.Length == 1) return true;
+                if (speeds.Length != numOfUsers || !System.Text.RegularExpressions.Regex.IsMatch(s, "^\\d{1,2}$"))
+                {
+                    MessageBox.Show("Incorrect speed input");
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+
+        private void chat(object u)
+        {
+            while (((User)u).continueThread)
+            {
+                ChatWindow.marginalies.Invoke((MethodInvoker)delegate
+                {
+                    ChatWindow.marginalies.SelectionColor = Color.Gray;
+                    ChatWindow.marginalies.SelectedText = Environment.NewLine + new string('-', 58);
+                    ChatWindow.marginalies.SelectionColor = ((User)u).color;
+                    ChatWindow.marginalies.SelectedText = Environment.NewLine + ((User)u).name + ": " + 
+                                                            StringPool.phrases[rnd.Next(StringPool.phrases.Length)];
+
+                    ChatWindow.marginalies.ScrollToCaret();
+                });
+                Thread.Sleep(((User)u).speed * 1000);
+            }
+
+            
+        }
+    }
+}
