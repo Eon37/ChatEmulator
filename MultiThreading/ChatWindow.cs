@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MultiThreading
@@ -44,7 +40,7 @@ namespace MultiThreading
                                     Color.FromArgb(rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255)),
                                     speeds.Length == 1 ? Byte.Parse(speeds[0]) : Byte.Parse(speeds[i])));
             }
-
+            
 
             foreach (User u in users)
             {
@@ -60,13 +56,40 @@ namespace MultiThreading
             foreach (string s in speeds)
             {
                 if (speeds.Length == 1) return true;
-                if (speeds.Length != numOfUsers || !System.Text.RegularExpressions.Regex.IsMatch(s, "^\\d{1,2}$"))
+                if (speeds.Length != numOfUsers || !System.Text.RegularExpressions.Regex.IsMatch(s, "^\\d{1,2}$")
+                    || amountBox.Text == "0")
                 {
                     MessageBox.Show("Incorrect speed input");
                     return false;
                 }
             }
             return true;
+        }
+
+        private string says()
+        {
+            byte numOfWords = (byte)rnd.Next(1,15);
+            byte numOfLetters;
+            char[] word;
+            List<string> words = new List<string>();
+            string say;
+
+            for(byte i = 0; i< numOfWords; i++)
+            {
+                numOfLetters = (byte)rnd.Next(1,14);
+                word = new char[numOfLetters];
+                for (byte j = 0; j < numOfLetters; j++)
+                {
+                    word[j] = (char)rnd.Next('a', 'z');
+                }
+                words.Add(new string(word));
+            }
+
+            words[0] = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(words[0]);
+
+            say = words.Aggregate((i, j) => i + " " + j);
+
+            return say + StringPool.endOfSentence[rnd.Next(0, 3)];
         }
         
 
@@ -80,7 +103,7 @@ namespace MultiThreading
                     ChatWindow.marginalies.SelectedText = Environment.NewLine + new string('-', 58);
                     ChatWindow.marginalies.SelectionColor = ((User)u).color;
                     ChatWindow.marginalies.SelectedText = Environment.NewLine + ((User)u).name + ": " + 
-                                                            StringPool.phrases[rnd.Next(StringPool.phrases.Length)];
+                                                            says();
 
                     ChatWindow.marginalies.ScrollToCaret();
                 });

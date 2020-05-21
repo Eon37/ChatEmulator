@@ -146,13 +146,12 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(550, 700);
-            this.MinimumSize = new System.Drawing.Size(391, 537);
+            this.MinimumSize = new System.Drawing.Size(391, 580);
             this.Name = "ChatWindow";
             this.Text = "Chat Emulator";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 
         }
 

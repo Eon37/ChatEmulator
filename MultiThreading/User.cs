@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace MultiThreading
 {
     public class User
     {
-        public User(string n, Color c, byte s)
+        public bool continueThread { get; set; }
+        public string name { get; }
+        public Color color { get; }
+        public byte speed { get; }
+
+        public User(string name, Color color, byte speed)
         {
-            name = n;
-            color = c;
-            speed = s;
+            this.name = name;
+            this.color = color;
+            this.speed = speed;
             continueThread = true;
         }
-        public bool continueThread;
-        public string name;
-        public Color color;
-        public byte speed;
     }
 }
